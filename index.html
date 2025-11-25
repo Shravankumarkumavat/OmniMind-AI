@@ -906,19 +906,19 @@
             
             <div class="form-group">
                 <label>Chat Manager URL</label>
-                <input type="text" id="chatManagerUrl" value="http://localhost:5002">
+                <input type="text" id="chatManagerUrl" value="">
                 <div class="form-hint">Local server address</div>
             </div>
 
             <div class="form-group">
                 <label>LLM Server URL (Google Colab)</label>
-                <input type="text" id="llmServerUrl" placeholder="https://your-ngrok-url.ngrok-free.app">
+                <input type="text" id="llmServerUrl" placeholder="">
                 <div class="form-hint">Get from Colab ngrok output</div>
             </div>
 
             <div class="form-group">
                 <label>Passkey</label>
-                <input type="password" id="passkeyInput" value="skumar123">
+                <input type="password" id="passkeyInput" value="">
                 <div class="form-hint">Must match server configuration</div>
             </div>
 
@@ -936,7 +936,7 @@
     <script>
         // Configuration
         let config = {
-            chatManagerUrl: 'http://127.0.0.1:5002',
+            chatManagerUrl: '', // add urls and passkey
             llmServerUrl: '',
             passkey: '',
             currentUser: null
@@ -1603,4 +1603,5 @@
         window.handleLogout = handleLogout;
     </script>
 </body>
+
 </html>
