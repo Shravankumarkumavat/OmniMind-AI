@@ -1,5 +1,5 @@
 # ============================================
-# CHAT MANAGER - With Authentication System (FIXED)
+# CHAT MANAGER - With Authentication System
 # ============================================
 
 from flask import Flask, request, jsonify, session
@@ -18,7 +18,7 @@ load_dotenv()
 # Configuration from .env
 LLM_SERVER_URL = os.getenv("LLM_SERVER_URL", "")
 PASSKEY = os.getenv("PASSKEY", "")
-TURN_LIMIT = int(os.getenv("TURN_LIMIT", "10"))
+TURN_LIMIT = 10
 SECRET_KEY = os.getenv("SECRET_KEY")
 frontend_url = os.getenv("FRONTEND_URL","")
 app = Flask(__name__)
@@ -40,7 +40,7 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
 # Data storage files - Create directory if it doesn't exist
-DATA_DIR = r"C:/llm_chatbot_self/final"
+DATA_DIR = r"" # set directory path
 os.makedirs(DATA_DIR, exist_ok=True)
 
 DATA_FILE = os.path.join(DATA_DIR, "chat_sessions.json")
@@ -251,7 +251,7 @@ def check_turn_limit(session_id):
 # ============================================
 @app.route("/")
 def home():
-    return {"message": "Hello World!"}
+    return {"message": "Chat Manager Server is Online"}
 
 @app.route("/auth/register", methods=["POST", "OPTIONS"])
 def register():
@@ -394,7 +394,7 @@ def require_auth(f):
     """Decorator to require authentication"""
     def wrapper(*args, **kwargs):
 
-        # ⭐ FIX: allow CORS preflight OPTIONS through
+        
         if request.method == "OPTIONS":
             return jsonify({"status": "ok"}), 200
 
@@ -626,7 +626,6 @@ if __name__ == "__main__":
     print("\n" + "="*60)
     print("💬 Local Chat Manager Starting (With Authentication)...")
     print("="*60)
-    print(f"📍 Running on: http://localhost:5002")
     print(f"🤖 LLM Server: {LLM_SERVER_URL if LLM_SERVER_URL else 'Not configured'}")
     print(f"💾 Data Directory: {DATA_DIR}")
     print(f"📄 Sessions File: {DATA_FILE}")
@@ -639,4 +638,5 @@ if __name__ == "__main__":
     print("="*60 + "\n")
     
     # Run server
+
     app.run(host='0.0.0.0', port=5002, debug=True, use_reloader=False)
