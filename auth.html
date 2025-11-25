@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniMind AI - Authentication</title>
+    <link rel="icon" type="image/png" href="OmniMind.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Auth-specific styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: var(--secondary-dark);
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--tertiary-dark);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-light), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--tertiary-dark);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(46, 125, 233, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-glow));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 125, 233, 0.3);
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 233, 0.5);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .auth-switch a {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--error);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--success);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .auth-box {
+                padding: 30px 20px;
+            }
+
+            .auth-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 15px;
+            }
+
+            .auth-box {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-logo">
+            <img src="OmniMind.png" alt="Logo" onerror="this.outerHTML='<div style=&quot;font-size:64px&quot;>🤖</div>'">
+        </div>
+        <div class="loading-text">OmniMind AI</div>
+        <div class="loading-subtitle">Advanced RAG System with Episodic Memory</div>
+        <div class="loader"></div>
+    </div>
+
+    <!-- Server Offline Screen -->
+    <div id="offlineScreen">
+        <i class="fas fa-power-off offline-icon"></i>
+        <h1 class="offline-title">Service Currently Unavailable</h1>
+        <p class="offline-message">
+            The OmniMind AI is currently offline for maintenance. 
+            Please contact the administrator to request access or check back later.
+        </p>
+        <div class="contact-card">
+            <div class="contact-title">📞 Contact Information</div>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <a href="tel:+917875480054">+91 787-548-0054</a>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <a href="mailto:skumarkumavat@gmail.com">skumarkumavat@gmail.com</a>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-clock"></i>
+                <span>Response Time: Within 24 hours</span>
+            </div>
+        </div>
+        <button class="retry-btn" onclick="retryConnection()">
+            <i class="fas fa-redo"></i> Try Again
+        </button>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="auth-container hidden">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="OmniMind.png" alt="Logo" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='<div style=&quot;font-size:48px&quot;>🤖</div>'">
+                </div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to continue your conversations</p>
+            </div>
+
+            <div id="loginError" class="error-message hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="loginErrorText"></span>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Passkey</label>
+                    <input type="password" id="loginPasskey" placeholder="Enter system passkey" required>
+                    <div class="form-hint">Contact admin if you don't have the passkey</div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <div class="auth-switch">
+                Don't have an account? <a onclick="showRegister()">Create Account</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Screen -->
+    <div id="registerScreen" class="auth-container hidden">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <img src="OmniMind.png" alt="Logo" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='<div style=&quot;font-size:48px&quot;>🎉</div>'">
+                </div>
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Join OmniMind AI today</p>
+            </div>
+
+            <div id="registerError" class="error-message hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="registerErrorText"></span>
+            </div>
+
+            <div id="registerSuccess" class="success-message hidden">
+                <i class="fas fa-check-circle"></i>
+                <span id="registerSuccessText"></span>
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="registerName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="registerUsername" placeholder="Choose a username" required>
+                    <div class="form-hint">Minimum 3 characters, lowercase only</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="registerPassword" placeholder="Create a password" required>
+                    <div class="form-hint">Minimum 6 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm your password" required>
+                </div>
+
+                <div class="form-group">
+                    <label>System Passkey</label>
+                    <input type="password" id="registerPasskey" placeholder="Enter system passkey" required>
+                    <div class="form-hint">Required for account creation - contact admin</div>
+                </div>
+
+                <button type="submit" class="auth-btn" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="auth-switch">
+                Already have an account? <a onclick="showLogin()">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    let config = {
+        chatManagerUrl: 'http://127.0.0.1:5002',
+        llmServerUrl: '',
+        currentUser: null
+    };
+
+    const savedConfig = localStorage.getItem('chatbot_config');
+    if (savedConfig) config = JSON.parse(savedConfig);
+
+    // ============================================
+    // MAIN INITIALIZATION
+    // ============================================
+    document.addEventListener('DOMContentLoaded', async () => {
+        await new Promise(r => setTimeout(r, 2000));
+
+        console.log("Checking server health...");
+        const serverOnline = await checkServerStatus();
+        document.getElementById('loadingScreen').classList.add('hidden');
+
+        if (!serverOnline) {
+            document.getElementById("offlineScreen").classList.add("active");
+            return;
+        }
+
+        // Check if user is already authenticated
+        const authStatus = await checkAuthStatus();
+
+        if (authStatus.authenticated) {
+            config.currentUser = authStatus.user;
+            config.llmServerUrl = authStatus.llm_url;
+            localStorage.setItem("chatbot_config", JSON.stringify(config));
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Not authenticated → show login screen
+        showLogin();
+
+        // AFTER login screen is visible → now elements exist!
+        console.log("Attaching login + register listeners...");
+
+        document.getElementById("loginForm")
+            .addEventListener("submit", loginHandler);
+
+        document.getElementById("registerForm")
+            .addEventListener("submit", registerHandler);
+    });
+
+    // ============================================
+    // SERVER CHECKS
+    // ============================================
+    async function checkServerStatus() {
+        try {
+            const res = await fetch(`${config.chatManagerUrl}/health`, {
+                method: "GET",
+                signal: AbortSignal.timeout(5000)
+            });
+
+            return res.ok;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    async function checkAuthStatus() {
+        try {
+            const res = await fetch(`${config.chatManagerUrl}/auth/check`, {
+                method: "GET",
+                credentials: "include"
+            });
+
+            if (!res.ok) return { authenticated: false };
+            return await res.json();
+
+        } catch (err) {
+            return { authenticated: false };
+        }
+    }
+
+    // ============================================
+    // LOGIN UI HELPERS
+    // ============================================
+    function showLogin() {
+        document.getElementById('registerScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        clearMessages();
+    }
+
+    function showRegister() {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('registerScreen').classList.remove('hidden');
+        clearMessages();
+    }
+
+    function clearMessages() {
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('registerError').classList.add('hidden');
+        document.getElementById('registerSuccess').classList.add('hidden');
+    }
+
+    function showError(id, textId, msg) {
+        document.getElementById(id).classList.remove("hidden");
+        document.getElementById(textId).textContent = msg;
+    }
+
+    function showSuccess(id, textId, msg) {
+        document.getElementById(id).classList.remove("hidden");
+        document.getElementById(textId).textContent = msg;
+    }
+
+    // ============================================
+    // LOGIN HANDLER
+    // ============================================
+    async function loginHandler(e) {
+        e.preventDefault();
+        clearMessages();
+
+        const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const passkey = document.getElementById('loginPasskey').value;
+
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+
+        try {
+            const res = await fetch(`${config.chatManagerUrl}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ username, password, passkey })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showError("loginError", "loginErrorText", data.error);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                return;
+            }
+
+            // SUCCESS
+            config.currentUser = data.user;
+            config.llmServerUrl = data.llm_url;
+            localStorage.setItem("chatbot_config", JSON.stringify(config));
+
+            window.location.href = "index.html";
+
+        } catch (err) {
+            showError("loginError", "loginErrorText", "Network error");
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+    }
+
+    // ============================================
+    // REGISTER HANDLER
+    // ============================================
+    async function registerHandler(e) {
+        e.preventDefault();
+        clearMessages();
+
+        const name = document.getElementById('registerName').value.trim();
+        const username = document.getElementById('registerUsername').value.trim().toLowerCase();
+        const password = document.getElementById('registerPassword').value;
+        const confirm_password = document.getElementById('registerConfirmPassword').value;
+        const passkey = document.getElementById('registerPasskey').value;
+
+        const btn = document.getElementById('registerBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+        try {
+            const res = await fetch(`${config.chatManagerUrl}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name, username, password, confirm_password, passkey
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showError("registerError", "registerErrorText", data.error);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                return;
+            }
+
+            showSuccess("registerSuccess", "registerSuccessText", "Account created! Redirecting...");
+            document.getElementById("registerForm").reset();
+
+            setTimeout(showLogin, 2000);
+
+        } catch (err) {
+            showError("registerError", "registerErrorText", "Network error");
+        }
+
+        btn.disabled = false;
+    }
+
+    window.showLogin = showLogin;
+    window.showRegister = showRegister;
+</script>
+
+</body>
+</html>
