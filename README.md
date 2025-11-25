@@ -559,7 +559,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Your Name**
 
 - GitHub: [@Shravankumarkumavat](https://github.com/Shravankumarkumavat)
-- LinkedIn: [Your Name](https://linkedin.com/in/shravankumar-kumavat)
+- LinkedIn: [Shravankumar Kumavat](https://linkedin.com/in/shravankumar-kumavat)
 - Email: skumarkumavat@gmail.com
 
 ---
@@ -584,13 +584,6 @@ If you have any questions or need help, feel free to:
 - Email: skumarkumavat@gmail.com
 
 
----
-
-## ⭐ Star History
-
-If you found this project helpful, please consider giving it a star!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/omnimind-ai&type=Date)](https://star-history.com/#yourusername/omnimind-ai&Date)
 
 ---
 
